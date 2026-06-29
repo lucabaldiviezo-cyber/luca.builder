@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luca - Builder</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f1013; /* Grisáceo oscuro sofisticado para contraste base */
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        
+        /* Resplandor tecnológico de fondo */
+        .glow-bg {
+            position: absolute;
+            top: -5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.07) 0%, rgba(6, 182, 212, 0.02) 50%, rgba(0,0,0,0) 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Marquee interactivo */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 25s linear infinite;
+        }
+        .animate-marquee-reverse {
+            animation: marquee 25s linear infinite reverse;
+        }
+        .fade-edges {
+            mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+        }
+
+        /* CLASE CORE: Tarjetas de Cristal Translúcido Tecnológico (Glassmorphism) */
+        .tech-card {
+            background: rgba(20, 22, 27, 0.55); /* Capa grisácea translúcida */
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Efecto de iluminación interactiva en los bordes */
+        .bento-glow {
+            position: relative;
+        }
+        .bento-glow::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.08), transparent, rgba(16, 185, 129, 0.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        
+        /* Hover generalizado para las pancartas de información */
+        .tech-card:hover {
+            background: rgba(28, 31, 38, 0.7);
+            border-color: rgba(255, 255, 255, 0.09);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+            transform: translateY(-2px);
+        }
+        .bento-glow:hover::before {
+            background: linear-gradient(to bottom right, rgba(6, 182, 212, 0.3), rgba(16, 185, 129, 0.3));
+        }
+
+        /* TEXTO EN FONDO ADAPTATIVO CON MIX-BLEND */
+        .watermark-text {
+            mix-blend-mode: overlay;
+        }
+
+        /* ANIMACIONES PERSONALIZADAS APARICIÓN LETRA POR LETRA (Efecto Tipeo) */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #10b981; }
+        }
+        .type-line {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+        }
+        /* Desfases controlados para simular escritura secuencial */
+        .line-1 { animation: typing 1s steps(30, end) forwards; animation-delay: 0.4s; }
+        .line-2 { animation: typing 1s steps(30, end) forwards; animation-delay: 1.4s; }
+        .line-3 { animation: typing 1s steps(30, end) forwards; animation-delay: 2.4s; }
+        .line-4 { animation: typing 1s steps(30, end) forwards; animation-delay: 3.4s; }
+        .line-5 { animation: typing 1s steps(30, end) forwards; animation-delay: 4.4s; }
+        .line-6 { animation: typing 1s steps(30, end) forwards; animation-delay: 5.4s; border-right: 2px solid #10b981; animation: typing 1s steps(30, end) forwards, blink-caret .75s step-end infinite; }
+
+        /* ESTILOS MODO CLARO INTEGRADOS SUTILMENTE */
+        .light-theme {
+            background-color: #f4f5f7;
+            color: #374151;
+        }
+        .light-theme .tech-card {
+            background: rgba(255, 255, 255, 0.75);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+        }
+        .light-theme .tech-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(16, 185, 129, 0.25);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.06);
+        }
+        /* Corrección de selectores de texto para forzar visibilidad */
+        .light-theme .text-white, 
+        .light-theme h1, 
+        .light-theme h2, 
+        .light-theme h3, 
+        .light-theme h4, 
+        .light-theme .text-zinc-300 {
+            color: #0f172a !important;
+        }
+        /* Excepción explícita para que el botón de "Iniciar proyecto" mantenga su color blanco original */
+        .light-theme a[href="#contacto"].text-white {
+            color: #ffffff !important;
+        }
+        /* Excepción para que las etiquetas especiales mantengan sus colores intactos */
+        .light-theme .text-emerald-400 {
+            color: #10b981 !important;
+        }
+        .light-theme .text-zinc-400 {
+            color: #4b5563 !important;
+        }
+        .light-theme .text-zinc-500 {
+            color: #6b7280 !important;
+        }
+        /* Adaptación específica para el bloque de código de la derecha */
+        .light-theme .bg-black\/40 {
+            background-color: rgba(255, 255, 255, 0.6) !important;
+        }
+        .light-theme .bg-zinc-950\/80 {
+            background-color: rgba(243, 244, 246, 0.9) !important;
+        }
+        .light-theme .border-zinc-800,
+        .light-theme .border-zinc-900 {
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+        /* Encabezado y pie de página */
+        .light-theme header {
+            background-color: rgba(255, 255, 255, 0.75) !important;
+            border-color: rgba(0, 0, 0, 0.06) !important;
+        }
+        .light-theme footer {
+            background-color: #eae9ee !important;
+            border-color: rgba(0, 0, 0, 0.06) !important;
+        }
+    </style>
+    
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme-init');
+            }
+            
+            // Forzar el scroll hacia arriba inmediatamente antes de renderizar para evitar saltos bruscos visuales
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+            window.scrollTo(0, 0);
+        })();
+    </script>
+</head>
+<body class="text-zinc-300 antialiased overflow-x-hidden selection:bg-emerald-500/20 selection:text-emerald-300">
+
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+        <div class="watermark-text absolute text-[12vw] font-black uppercase tracking-tighter text-zinc-700/15 dark:text-zinc-400/5 font-mono left-[-3%] top-[12%] transform -rotate-12">
+            luca.builder
+        </div>
+        <div class="watermark-text absolute text-[9vw] font-light italic tracking-widest text-zinc-600/15 dark:text-zinc-400/5 right-[2%] top-[48%] transform rotate-6">
+            siempre creando
+        </div>
+        <div class="watermark-text absolute text-[11vw] font-black uppercase tracking-tighter text-zinc-700/15 dark:text-zinc-400/5 font-mono left-[8%] bottom-[15%] transform -rotate-6">
+            luca.builder
+        </div>
+    </div>
+
+    <div class="glow-bg relative z-10"></div>
+
+    <header class="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-zinc-900/50 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between relative z-10">
+            <div class="cursor-pointer group">
+                <a href="#" class="font-black text-xl text-white tracking-tighter block">LUCA<span class="text-emerald-500">.</span>BUILDER</a>
+                <p class="text-[10px] uppercase font-mono tracking-widest text-zinc-500 group-hover:text-cyan-400 transition-colors">Luca Baldiviezo</p>
+            </div>
+            <nav class="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-wider text-zinc-400">
+                <a href="#problemas" class="hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-emerald-400 hover:after:w-full after:transition-all">// problemas</a>
+                <a href="#servicios" class="hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-emerald-400 hover:after:w-full after:transition-all">// servicios</a>
+                <a href="#proceso" class="hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-emerald-400 hover:after:w-full after:transition-all">// proceso</a>
+                <a href="#tecnologia" class="hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-emerald-400 hover:after:w-full after:transition-all">// tecnología</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="text-[10px] font-mono uppercase tracking-widest bg-zinc-900/60 dark:bg-zinc-900 border border-zinc-800 text-zinc-400 px-3 py-1.5 rounded-md hover:border-emerald-500/50 hover:text-white transition-all cursor-pointer">
+                    [ <span id="theme-text">Claro</span> ]
+                </button>
+                
+                <a href="#contacto" class="text-xs font-mono uppercase tracking-wider bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500 hover:text-black text-white px-5 py-2.5 rounded-lg transition-all duration-300 inline-block shadow-xl">
+                    [ Iniciar proyecto ]
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pt-20 pb-28 grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch relative z-10">
+        <div class="lg:col-span-7 flex flex-col justify-between space-y-8" data-aos="fade-right" data-aos-duration="1000">
+            <div class="space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-zinc-900/80 border border-zinc-800 text-[10px] font-mono tracking-widest uppercase text-emerald-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> PRODUCTION_READY_
+                </div>
+                <h1 class="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">
+                    Convertimos ideas en software <span class="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 via-zinc-400 to-zinc-600 block lg:inline">excepcional.</span>
+                </h1>
+                <p class="text-zinc-400 text-base md:text-lg max-w-xl leading-relaxed font-light">
+                    Diseñamos y programamos arquitecturas digitales optimizadas para negocios exigentes. Automatizaciones inteligentes, interfaces milimétricas y código limpio.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4" data-aos="fade-up" data-aos-delay="300" data-aos-duration="800">
+                <div class="p-5 rounded-xl tech-card">
+                    <div class="text-xs font-mono text-emerald-500 mb-1">01 / FIABILIDAD</div>
+                    <h3 class="font-bold text-white text-sm mb-1">Cercanía Absoluta</h3>
+                    <p class="text-xs text-zinc-500 leading-snug">Soporte directo sin intermediarios burocráticos.</p>
+                </div>
+                <div class="p-5 rounded-xl tech-card">
+                    <div class="text-xs font-mono text-cyan-400 mb-1">02 / ARQUITECTURA</div>
+                    <h3 class="font-bold text-white text-sm mb-1">Criterio Técnico</h3>
+                    <p class="text-xs text-zinc-500 leading-snug">Elegimos el stack óptimo enfocado en rendimiento.</p>
+                </div>
+                <div class="p-5 rounded-xl tech-card">
+                    <div class="text-xs font-mono text-zinc-500 mb-1">03 / EVOLUCIÓN</div>
+                    <h3 class="font-bold text-white text-sm mb-1">Soporte Continuo</h3>
+                    <p class="text-xs text-zinc-500 leading-snug">Mantenemos tu system actualizado e invulnerable.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col justify-between gap-6" data-aos="fade-zoom-in" data-aos-duration="1200" data-aos-delay="200">
+            <div class="w-full flex-1 rounded-xl bg-black/40 border border-zinc-800 shadow-2xl overflow-hidden code-font text-[11px] backdrop-blur-md transform hover:scale-[1.01] transition-all duration-500 flex flex-col justify-between">
+                <div>
+                    <div class="bg-zinc-950/80 px-4 py-4 border-b border-zinc-900 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500/80 animate-pulse"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80 animate-pulse [animation-delay:0.2s]"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-green-500/80 animate-pulse [animation-delay:0.4s]"></span>
+                        </div>
+                        <span class="text-zinc-600 text-[9px] tracking-wider uppercase font-mono">// core/engine.ts</span>
+                    </div>
+                    
+                    <div class="p-6 space-y-2 text-zinc-500 leading-relaxed font-mono">
+                        <span class="type-line line-1"><span class="text-emerald-400">import</span> { system } <span class="text-emerald-400">from</span> <span class="text-cyan-300">"luca-builder"</span>;</span>
+                        <span class="type-line line-2"><br></span>
+                        <span class="type-line line-3"><span class="text-zinc-400">const</span> deploy = <span class="text-emerald-400">async</span> () =&gt; {</span>
+                        <span class="type-line line-4" style="padding-left: 1rem;">const idea = await system.<span class="text-white">listen</span>();</span>
+                        <span class="type-line line-5" style="padding-left: 1rem;">const logic = system.<span class="text-white">optimize</span>(idea);</span>
+                        <span class="type-line line-6" style="padding-left: 1rem;"><span class="text-cyan-400">return <span class="text-zinc-400">system.</span><span class="text-emerald-400">launch</span>({ logic, clean: true });</span></span>
+                        <span class="type-line line-6">};</span>
+                    </div>
+                </div>
+                
+                <div class="px-6 py-4 border-t border-zinc-900/40 bg-zinc-950/20 text-[9px] text-zinc-600 tracking-widest uppercase font-mono">
+                    // initialization_sequence_complete
+                </div>
+            </div>
+
+            <div class="rounded-xl tech-card p-5 code-font text-[11px] flex items-center justify-between shadow-xl">
+                <div class="flex items-center gap-3">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-zinc-400">STATUS: // SYSTEM_OPTIMAL</span>
+                </div>
+                <span class="text-zinc-600 text-[10px]">v2.0.26</span>
+            </div>
+        </div>
+    </main>
+
+    <section class="max-w-6xl mx-auto px-6 py-8 relative z-10" data-aos="zoom-in" data-aos-duration="800">
+        <div class="tech-card rounded-2xl p-8 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/5 blur-3xl rounded-full"></div>
+            <div class="space-y-2 max-w-xl">
+                <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight font-mono">// Alta ingeniería. Cero fricciones.</h2>
+                <p class="text-zinc-500 text-xs md:text-sm leading-relaxed">
+                    No solo escribimos líneas de código. Conceptualizamos, diseñamos y estructuramos flujos lógicos para resolver problemas operativos del mundo real.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1.5 rounded-md bg-zinc-900/60 text-[10px] font-mono tracking-wider text-zinc-400 border border-zinc-800">PERFORMANCE_OK</span>
+                <span class="px-3 py-1.5 rounded-md bg-emerald-500/10 text-[10px] font-mono tracking-wider text-emerald-400 border border-emerald-500/20">SCALABLE_TRUE</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="problemas" class="max-w-6xl mx-auto px-6 py-16 space-y-12 relative z-10">
+        <div class="space-y-4" data-aos="fade-up" data-aos-duration="800">
+            <div class="text-[10px] font-mono tracking-widest text-zinc-600 uppercase">// INFRAESTRUCTURA Y ANÁLISIS</div>
+            <h2 class="text-4xl md:text-5xl font-black text-white tracking-tighter max-w-xl leading-none">
+                Identificamos cuellos de botella operativos.
+            </h2>
+            <p class="text-zinc-400 max-w-md text-sm font-light">
+                Antes de proponer tecnología, auditamos el problem de raíz para asegurar que cada desarrollo tenga un retorno inmediato.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-8 rounded-2xl tech-card flex flex-col justify-between h-64 relative overflow-hidden group" data-aos="fade-up" data-aos-duration="600">
+                <span class="absolute right-6 top-4 text-6xl font-black text-zinc-800/10 font-mono select-none group-hover:text-zinc-700/20 transition-colors">01</span>
+                <div>
+                    <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">LOGÍSTICA DE PEDIDOS</span>
+                    <p class="italic text-emerald-400 mt-2 text-xs font-mono">&gt; "Mis canales de venta están colapsados y desordenados"</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-1">Estructuración Automatizada</h3>
+                    <p class="text-xs text-zinc-500 leading-relaxed">Interceptamos las intenciones de compra y las convertimos en datos procesables antes de que toquen tu mensajería.</p>
+                </div>
+            </div>
+
+            <div class="p-8 rounded-2xl tech-card flex flex-col justify-between h-64 relative overflow-hidden group" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+                <span class="absolute right-6 top-4 text-6xl font-black text-zinc-800/10 font-mono select-none group-hover:text-zinc-700/20 transition-colors">02</span>
+                <div>
+                    <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">PRESENCIA Y AUTORIDAD</span>
+                    <p class="italic text-cyan-400 mt-2 text-xs font-mono">&gt; "Tengo un producto excelente pero mi landing da desconfianza"</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-1">Interfaces de Alto Impacto</h3>
+                    <p class="text-xs text-zinc-500 leading-relaxed">Construimos experiencias visuales ultrarápidas, estables y estéticas que posicionan tu marca al nivel de las mejores del mercado.</p>
+                </div>
+            </div>
+
+            <div class="p-8 rounded-2xl tech-card flex flex-col justify-between h-64 relative overflow-hidden group" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+                <span class="absolute right-6 top-4 text-6xl font-black text-zinc-800/10 font-mono select-none group-hover:text-zinc-700/20 transition-colors">03</span>
+                <div>
+                    <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">MIGRACIÓN DIGITAL</span>
+                    <p class="italic text-zinc-500 mt-2 text-xs font-mono">&gt; "Perdemos horas copiando datos manualmente a planillas"</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-1">Automatización Integrada</h3>
+                    <p class="text-xs text-zinc-500 leading-relaxed">Conectamos tus herramientas vía API. La información fluye sola, eliminando por completo el error humano.</p>
+                </div>
+            </div>
+
+            <div class="p-8 rounded-2xl tech-card flex flex-col justify-between h-64 relative overflow-hidden group" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+                <span class="absolute right-6 top-4 text-6xl font-black text-zinc-800/10 font-mono select-none group-hover:text-zinc-700/20 transition-colors">04</span>
+                <div>
+                    <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">SISTEMAS INCOMPLETOS</span>
+                    <p class="italic text-zinc-500 mt-2 text-xs font-mono">&gt; "Tengo una idea técnica masiva pero no sé cómo modularizarla"</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-1">Desarrollo por MVPs</h3>
+                    <p class="text-xs text-zinc-500 leading-relaxed">Estructuramos alcances lógicos. Te entregamos un producto funcional rápido para que pruebes el mercado sin gastar de más.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicios" class="max-w-6xl mx-auto px-6 py-24 space-y-12 relative z-10">
+        <div class="space-y-4" data-aos="fade-right" data-aos-duration="800">
+            <div class="text-[10px] font-mono tracking-widest text-emerald-400 uppercase">// CATÁLOGO DE CAPACIDADES / CORE_SERVICES</div>
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+                <h2 class="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none max-w-2xl">
+                    Soluciones de ingeniería a la medida de tu negocio.
+                </h2>
+                <p class="text-zinc-500 max-w-sm text-xs leading-relaxed font-mono">
+                    // No usamos plantillas rígidas. Modelamos software en función de tu carga operativa actual y tus objetivos de escalabilidad.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="tech-card bento-glow md:col-span-2 p-8 rounded-2xl flex flex-col justify-between min-h-[300px] overflow-hidden group shadow-2xl" data-aos="fade-up" data-aos-duration="600">
+                <div class="flex justify-between items-start">
+                    <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[9px] tracking-widest uppercase rounded">STACK_TOP_PERFORMANCE</span>
+                    <span class="text-zinc-600 font-mono text-xs font-bold">[ 01 ]</span>
+                </div>
+                <div class="space-y-3 mt-12">
+                    <h4 class="font-black text-white text-2xl md:text-3xl tracking-tight group-hover:text-emerald-400 transition-colors">Web Apps Robustas y Canales de Pedidos Avanzados</h4>
+                    <p class="text-xs md:text-sm text-zinc-400 max-w-xl leading-relaxed">
+                        Desarrollamos aplicaciones web progresivas que cargan al instante. Catálogos autogestionables, integraciones con pasarelas de pago y motores de reservas estructurados para que tu negocio nunca duerma.
+                    </p>
+                </div>
+                <div class="border-t border-zinc-900/60 pt-4 mt-6 flex gap-4 text-[10px] font-mono text-zinc-500">
+                    <span>#ASTRO</span> <span>#REACT</span> <span>#NEXTJS</span> <span>#TAILWIND</span>
+                </div>
+            </div>
+
+            <div class="tech-card bento-glow p-8 rounded-2xl flex flex-col justify-between min-h-[300px] group shadow-xl" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+                <div class="flex justify-between items-start">
+                    <span class="px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-[9px] tracking-widest uppercase rounded">LOGIC_ENGINES</span>
+                    <span class="text-zinc-600 font-mono text-xs font-bold">[ 02 ]</span>
+                </div>
+                <div class="space-y-2 mt-8">
+                    <h4 class="font-bold text-white text-xl tracking-tight group-hover:text-cyan-400 transition-colors">Sistemas a Medida e Interfaces Internas</h4>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Paneles de control privados y CRMs customizados para la gestión milimétrica de inventarios, clientes y reportes analíticos complejos.
+                    </p>
+                </div>
+                <div class="text-[10px] font-mono text-zinc-600">
+                    // DATA_DRIVEN_LOGIC
+                </div>
+            </div>
+
+            <div class="tech-card bento-glow p-8 rounded-2xl flex flex-col justify-between min-h-[300px] group shadow-xl" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+                <div class="flex justify-between items-start">
+                    <span class="px-3 py-1 bg-zinc-900/60 border border-zinc-800 text-zinc-400 font-mono text-[9px] tracking-widest uppercase rounded">AUTOMATION_FLOWS</span>
+                    <span class="text-zinc-600 font-mono text-xs font-bold">[ 03 ]</span>
+                </div>
+                <div class="space-y-2 mt-8">
+                    <h4 class="font-bold text-white text-xl tracking-tight group-hover:text-white transition-colors">Automatizaciones de Procesos y Webhooks</h4>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Conectamos plataformas dispares para erradicar procesos rutinarios redundantes. Sincronización automática en tiempo real garantizada.
+                    </p>
+                </div>
+                <div class="text-[10px] font-mono text-zinc-600">
+                    // API_INTEGRATIONS
+                </div>
+            </div>
+
+            <div class="tech-card bento-glow md:col-span-2 p-8 rounded-2xl flex flex-col justify-between min-h-[300px] overflow-hidden group shadow-2xl" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+                <div class="flex justify-between items-start">
+                    <span class="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 font-mono text-[9px] tracking-widest uppercase rounded">PREMIUM_SLA</span>
+                    <span class="text-zinc-600 font-mono text-xs font-bold">[ 04 ]</span>
+                </div>
+                <div class="space-y-3 mt-12">
+                    <h4 class="font-black text-white text-2xl tracking-tight group-hover:text-purple-400 transition-colors">Acompañamiento Técnico de Élite e Infraestructura</h4>
+                    <p class="text-xs md:text-sm text-zinc-400 max-w-xl leading-relaxed">
+                        Desplegamos en servidores globales en la nube con altos estándares de seguridad SSL y redundancia. Te acompañamos mes a mes optimizando, monitoreando caídas y escalando la arquitectura.
+                    </p>
+                </div>
+                <div class="border-t border-zinc-900/60 pt-4 mt-6 flex gap-4 text-[10px] font-mono text-zinc-500">
+                    <span>#LINUX</span> <span>#DOCKER</span> <span>#AWS</span> <span>#CI_CD</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="proceso" class="max-w-6xl mx-auto px-6 py-16 space-y-12 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div class="lg:col-span-4 space-y-4" data-aos="fade-right" data-aos-duration="800">
+                <div class="text-[10px] font-mono tracking-widest text-zinc-600 uppercase">// RECORRIDO GUIADO / RECURSIVE_METHOD</div>
+                <h2 class="text-4xl font-black text-white tracking-tighter leading-none">Una buena solución tiene método.</h2>
+                <p class="text-zinc-500 text-xs leading-relaxed font-light">
+                    Reducimos drásticamente la incertidumbre. Cada etapa concluye con una validación transparente antes de proceder a escribir código.
+                </p>
+            </div>
+            
+            <div id="steps-container" class="lg:col-span-8 space-y-6 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-900">
+                <div id="scroll-dot" class="absolute left-[11.5px] top-2 w-3 h-3 rounded-full bg-emerald-400 border border-black shadow-xl shadow-emerald-500/50 transition-all duration-100 ease-out z-20"></div>
+
+                <div class="relative pl-10 p-5 rounded-xl tech-card group" data-aos="fade-left" data-aos-duration="600">
+                    <span class="absolute left-2.5 top-7 w-3 h-3 rounded-full bg-zinc-950 border border-zinc-800 group-hover:border-emerald-500 transition-colors z-10"></span>
+                    <span class="text-[9px] font-mono text-zinc-500 tracking-wider uppercase block">Phase 01 // Discovery</span>
+                    <h4 class="font-bold text-white text-base group-hover:text-emerald-400 transition-colors">Entendemos la idea raíz</h4>
+                    <p class="text-xs text-zinc-400 max-w-xl leading-relaxed mt-1">Escuchamos el problema de raíz, el contexto comercial y el objetivo operativo técnico. Descartamos lo redundante.</p>
+                </div>
+                
+                <div class="relative pl-10 p-5 rounded-xl tech-card group" data-aos="fade-left" data-aos-duration="600" data-aos-delay="100">
+                    <span class="absolute left-2.5 top-7 w-3 h-3 rounded-full bg-zinc-950 border border-zinc-800 group-hover:border-cyan-400 transition-colors z-10"></span>
+                    <span class="text-[9px] font-mono text-zinc-500 tracking-wider uppercase block">Phase 02 // Architecture</span>
+                    <h4 class="font-bold text-white text-base group-hover:text-cyan-400 transition-colors">Diseñamos una arquitectura viable</h4>
+                    <p class="text-xs text-zinc-400 max-w-xl leading-relaxed mt-1">Modelamos flujos de datos lógicos, alcances modulares específicos y planteamos un Producto Mínimo Viable eficiente.</p>
+                </div>
+                
+                <div class="relative pl-10 p-5 rounded-xl tech-card group" data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">
+                    <span class="absolute left-2.5 top-7 w-3 h-3 rounded-full bg-zinc-950 border border-zinc-800 group-hover:border-white transition-colors z-10"></span>
+                    <span class="text-[9px] font-mono text-zinc-500 tracking-wider uppercase block">Phase 03 // Development</span>
+                    <h4 class="font-bold text-white text-base group-hover:text-white transition-colors">Construcción modular y staging</h4>
+                    <p class="text-xs text-zinc-400 max-w-xl leading-relaxed mt-1">Escribimos código limpio bajo metodologías iterativas, testeando la lógica central en entornos cerrados.</p>
+                </div>
+                
+                <div class="relative pl-10 p-5 rounded-xl tech-card group" data-aos="fade-left" data-aos-duration="600" data-aos-delay="300">
+                    <span class="absolute left-2.5 top-7 w-3 h-3 rounded-full bg-zinc-950 border border-zinc-800 group-hover:border-purple-400 transition-colors z-10"></span>
+                    <span class="text-[9px] font-mono text-zinc-500 tracking-wider uppercase block">Phase 04 // Deployment</span>
+                    <h4 class="font-bold text-white text-base group-hover:text-purple-400 transition-colors">Lanzamiento global y monitorización</h4>
+                    <p class="text-xs text-zinc-400 max-w-xl leading-relaxed mt-1">Hacemos el despliegue final en la nube, optimizamos índices SEO de carga y proveemos soporte analítico activo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tecnologia" class="max-w-6xl mx-auto px-6 py-20 space-y-10 relative z-10" data-aos="fade-up" data-aos-duration="800">
+        <div class="space-y-4">
+            <div class="text-[10px] font-mono tracking-widest text-zinc-600 uppercase">// ECOVIRONMENT STACK / CRITERIO_TECNICO</div>
+            <h2 class="text-4xl font-black text-white tracking-tighter leading-none">Herramientas globales de alto rendimiento.</h2>
+            <p class="text-zinc-500 max-w-xl text-xs font-mono">
+                // Seleccionamos frameworks modernos con ecosistemas estables para garantizar velocidad de procesamiento.
+            </p>
+        </div>
+
+        <div class="space-y-6 rounded-2xl tech-card p-6 md:p-8">
+            <div>
+                <span class="text-[9px] font-mono text-zinc-500 block mb-3 uppercase tracking-widest px-1">// Client Side Technologies</span>
+                <div class="relative w-full overflow-hidden fade-edges py-1">
+                    <div class="flex gap-2.5 w-max animate-marquee hover:[animation-play-state:paused]">
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-blue-400"></span> TypeScript</span>
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-orange-400"></span> Astro</span>
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-cyan-400"></span> React</span>
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-sky-400"></span> Tailwind CSS</span>
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-yellow-400"></span> JavaScript</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <span class="text-[9px] font-mono text-zinc-500 block mb-3 uppercase tracking-widest px-1">// Core Engines & Infrastructure</span>
+                <div class="relative w-full overflow-hidden fade-edges py-1">
+                    <div class="flex gap-2.5 w-max animate-marquee-reverse hover:[animation-play-state:paused]">
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-indigo-400"></span> PostgreSQL</span>
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-emerald-400"></span> REST APIs</span>
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-violet-400"></span> OAuth 2.0</span>
+                        <span class="px-4 py-2 rounded-xl bg-black/40 border border-zinc-900 text-xs font-medium text-zinc-400 inline-flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-emerald-600"></span> Django (Python)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacto" class="bg-black/30 border-t border-zinc-900 mt-12 relative z-10">
+        <div class="max-w-6xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-7 space-y-4" data-aos="fade-right" data-aos-duration="800">
+                <span class="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">// DEPLOYMENT_PHASE</span>
+                <h2 class="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">Hagamos que esa idea exista.</h2>
+                <p class="text-zinc-500 text-xs max-w-sm leading-relaxed font-light">
+                    Hablemos de lógica, alcances técnicos y presupuesto. Envíanos un mensaje para coordinar una sesión de consultoría inicial sin cargo.
+                </p>
+            </div>
+
+            <div class="lg:col-span-5 flex flex-col gap-3 w-full max-w-sm lg:ml-auto" data-aos="fade-left" data-aos-duration="800">
+                <a href="https://wa.me/3875611629" target="_blank" class="w-full text-center py-4 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold text-xs font-mono uppercase tracking-wider transition-all duration-300 shadow-2xl">
+                    [ Contactar vía WhatsApp ]
+                </a>
+                
+                <div class="text-center text-zinc-600 font-mono text-[9px] uppercase tracking-widest my-2">// OR_DIRECT_MAIL_CONNECTION</div>
+
+                <div class="p-4 rounded-xl tech-card space-y-2 font-mono text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="text-zinc-600 text-[10px]">INQUIRIES_</span>
+                        <a href="mailto:lucanaimbaldiviezo@gmail.com" class="text-white hover:text-emerald-400 transition-colors underline decoration-zinc-800">lucanaimbaldiviezo@gmail.com</a>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-zinc-900/40">
+                        <span class="text-zinc-600 text-[10px]">NETWORKS_</span>
+                        <a href="https://instagram.com/luca.builder" target="_blank" class="text-white hover:text-cyan-400 transition-colors">@luca.builder</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-6xl mx-auto px-6 py-6 border-t border-zinc-900/40 flex justify-between items-center text-[10px] text-zinc-600 font-mono">
+            <div>&copy; LUCA.BUILDER. DERECHOS_RESERVADOS.</div>
+            <div>[ DESARROLADO POR LUCA BALDIVIEZO ]</div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: false,
+            mirror: true
+        });
+
+        // LÓGICA INDICADOR SCROLLABLE
+        window.addEventListener('scroll', () => {
+            const container = document.getElementById('steps-container');
+            const dot = document.getElementById('scroll-dot');
+            
+            if (!container || !dot) return;
+
+            const rect = container.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+
+            const startPos = viewHeight * 0.7;
+            const currentProgress = startPos - rect.top;
+
+            let percentage = (currentProgress / rect.height) * 100;
+            
+            if (percentage < 0) percentage = 0;
+            if (percentage > 96) percentage = 96; 
+
+            dot.style.top = `${percentage}%`;
+        });
+
+        // LÓGICA OPTIMIZADA DE ALTERNANCIA OSCURO/CLARO CON PERSISTENCIA
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeText = document.getElementById('theme-text');
+        
+        // Sincronizar el estado de la UI basado en si se detectó la clase de inicialización previa
+        if (document.documentElement.classList.contains('light-theme-init')) {
+            document.documentElement.classList.remove('light-theme-init');
+            document.body.classList.add('light-theme');
+            themeText.textContent = 'Oscuro';
+        } else if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            themeText.textContent = 'Oscuro';
+        } else {
+            themeText.textContent = 'Claro';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            if (document.body.classList.contains('light-theme')) {
+                themeText.textContent = 'Oscuro';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeText.textContent = 'Claro';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>
